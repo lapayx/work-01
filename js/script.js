@@ -92,23 +92,34 @@ $(document).ready(function(){
 		});
 	}
 	let timer;
-	$('.quarters__wrapper--checkboxes input').on("change", function(){
-
-		$('.quarters__wrapper--checkboxes .elem__checkbox').each(function(index,elem){
+	$('.quarters__wrapper--checkboxes input').on("change", function () {
+		var isFirst = true
+		$('.quarters__wrapper--checkboxes .elem__checkbox').each(function (index, elem) {
+			var quarterElement = $(".quarters__container>.elem__quarter." + $(elem).attr("data-check"));
+			quarterElement.removeClass("filling");
+			quarterElement.removeClass("will__filled");
 			if ($(elem).find('input').prop('checked') == true) {
-				$(".quarters__container>.elem__quarter." + $(elem).attr("data-check")).removeClass("non__index");
+				quarterElement.removeClass("non__index");
+				if (isFirst) {
+					quarterElement.addClass("filling");
+					isFirst = false;
+				} else {
+					quarterElement.addClass("will__filled");
+				}
 			} else {
-				$(".quarters__container>.elem__quarter." + $(elem).attr("data-check")).addClass("non__index");
+				quarterElement.addClass("non__index");
 			}
 		});
 		if (timer) {
 			clearTimeout(timer);
 			timer = setTimeout(function(){
-				checkQuarters();		
+				checkQuarters();	
+				isFirst = true;
 			}, 1000);
 		} else {
 			timer = setTimeout(function(){
-				checkQuarters();		
+				checkQuarters();
+				isFirst = true;
 			}, 1000);
 		}
 		
@@ -460,7 +471,7 @@ $(document).ready(function(){
 			
 			let result = 0;
 			$('.quarters__container>.elem__quarter').each(function(index,elem){
-				if (result == 0) {
+				//if (result == 0) {
 					if (!$(elem).hasClass("non__index")) {
 						if ($(elem).hasClass("will__filled")) {
 							result = 1;
@@ -476,10 +487,15 @@ $(document).ready(function(){
 								}
 							}
 					}
-				}
+				//}
 			});
 			
 		}
+		if ($('.quarters__container .filling').next().length == 0) {
+			$('.controls__fill>.next__quarter').css("display" ,  'none');
+			$('.controls__fill>.next__step').css("display" , "flex");
+			}
+		
 		findButtonText();
 		$('html').animate({ 
 	    	    scrollTop: $(".form__step:visible").offset().top 
@@ -672,16 +688,11 @@ $(document).ready(function(){
 	    this.value = this.value.replace(/\D/g,'');
 	});
 
-	$('input.value').on("input" ,function(){
-		 this.value = this.value.replace(/\D/g,'');
-		if ($(this).val().indexOf("$") >= 0) {
-			$(this).val("$" + $(this).val().substr(1));
-		} else {
-			$(this).val("$" + $(this).val());
-		}
-		
+	$('input.value').on("input", function () {
+		let pattern =  /\d+\.{0,1}(\d+)?/;
+		 this.value = this.value.match(pattern)[0];
 
-		$(this).val($(this).val().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") ); 
+		$(this).val("$"+this.value ); 
 	});
 	$('input.value').on("blur" ,function(e){
 		if ($(this).val().length  == 1) {
