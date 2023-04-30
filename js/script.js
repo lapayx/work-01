@@ -834,6 +834,7 @@ $(document).ready(function(){
 	    	    scrollTop: $(".form__step:visible").offset().top 
 	        },600
 	        );
+			console.log("FIRST");
 			} else{
 				$(this).closest('.form__step').css("display" ,"none");
 				$('.form__step.back').fadeIn(300);
@@ -843,7 +844,36 @@ $(document).ready(function(){
 		    	    scrollTop: $(".form__step:visible").offset().top 
 		        },600
 		        );
+				console.log("SECOND");
 			}
+			
+			var firstName = $('.form__step.main__step .group__input.required.regular:eq(0) input').val();
+			var lastName = $('.form__step.main__step .group__input.required.regular:eq(1) input').val();
+			var companyName = $('.form__step.main__step .group__input.required.regular:eq(2) input').val();
+			var companyEmail = $('.form__step.main__step .group__input.required.email input').val();
+			var companyPhone = $('.form__step.main__step .group__input.required.phone input').val();
+			var startDate = $('.form__step.main__step .group__input.employees input').datepicker('getDate');
+			console.warn("NEXT PAGE");
+			console.log(companyEmail);
+			console.log(companyPhone);
+			//Legal Company Name
+			console.log(companyName);
+			console.log(firstName);
+			console.log(lastName);
+			console.log(startDate);
+			
+			$('.form__step .business__details ul li:nth-child(1) span').text(firstName);
+			$('.form__step .business__details ul li:nth-child(2) span').text(lastName);
+			$('.form__step .business__details ul li:nth-child(3) span').text("");  //  Role  -> CEO
+			$('.form__step .business__details ul li:nth-child(4) span').text(companyName);
+ 			$('.form__step .business__details ul li:nth-child(5) span').text("");  //  Business Address
+			$('.form__step .business__details ul li:nth-child(6) span').text("");  //  City
+			$('.form__step .business__details ul li:nth-child(7) span').text("");  //  State
+			$('.form__step .business__details ul li:nth-child(8) span').text("");  //  ZIP code
+			$('.form__step .business__details ul li:nth-child(9) span').text(companyPhone);
+			$('.form__step .business__details ul li:nth-child(10) span').text("");  //  EIN -> Employer identification number
+			
+			//$('.form__step .business__details ul li:nth-child() span').text();
 		}
 	});
 
@@ -911,21 +941,57 @@ $(document).ready(function(){
 		var size = $('.check__refunds .elem__check').length
 		let totalRefound = 0;
 
+        // Non Refoundable Taxes -> for each Quarter
 		for (let i = 1; i <= size; i++) {
 			let key = `elem${i}`;
 			if (key in obj) {
-				let perc = parseFloat((obj[`elem${i}`].totalWages).replace(/[,|$]/g, ""));
+				let ownershipWages = 0,
+				    qualifiedWages = 0,
+					needValidResult1 = 0,
+					ERCvalidtion = 0,
+					refundablePortionERC = 0;
+				let employeesWorked = parseInt(obj[`elem${i}`].employeesWorked);
+				let ttlWages = parseFloat((obj[`elem${i}`].totalWages).replace(/[,|$]/g, ""));
+				let perc = ttlWages;
+				if(obj[`elem${i}`].w2Period.wagesW2 !== "")
+				    ownershipWages = parseFloat((obj[`elem${i}`].w2Period.wagesW2).replace(/[,|$]/g, ""));
+				qualifiedWages = ttlWages - ownershipWages; // - Function 2 PPP ???
 				if (i === 1 || i === 2 || i === 3) {
-					perc *= 0.064; 
+					perc *= 0.064;     // % 6.40     *     DATA (941 5A)
+					needValidResult1 = qualifiedWages * 0.5;
 				} else {
-					perc *= 0.0145;
+					perc *= 0.0145;    // % 1.45     *     DATA (941 5A)
+					needValidResult1 = qualifiedWages * 0.7;
 				}
+				ERCvalidtion = needValidResult1 / employeesWorked;
+				refundablePortionERC = perc + needValidResult1;
+				//refundablePortionERC = perc - needValidResult1;
 				totalRefound += perc;
 				let elements = $('.check__refunds .elem__check');
 				let indexElement = i - 1;
-				perc = Math.round(perc)
+				perc = Math.round(perc);  // Non Refundable Taxes 
 				$(elements[indexElement]).attr('data-value', perc);
 				$(elements[indexElement]).find('.left__check p').text('$' + addCommas(perc));
+				console.warn("Non Refundable Taxes"); // for each quarter
+				console.log('$' + addCommas(perc));
+				
+				
+				//Qualified Wages = totalWages - Ownership Wages TTL - (Function 2 -PPP ???)
+				console.log('Qualified Wages: $' + addCommas(qualifiedWages));
+				
+				//Total ERC Credit 
+				//1st Result NEEDS VALIDATION = Qualified Wages * %50 ( for = 1,2,3) 
+				//1st Result NEEDS VALIDATION = Qualified Wages * %70 ( for = 4,5,6) / employeesWorked
+				console.log('1st Result NEEDS VALIDATION: $' + needValidResult1);
+				//Validation = 1st Result NEEDS VALIDATION / employeesWorked
+				console.log('ERC VALIDATION: $' + ERCvalidtion);
+				//Maximum = ???
+				//2nd Result (941X)  =   Maximum * employeesWorked
+				
+				//Refundable Portion of ERC
+				//1st Result (941X) L26A C1 = Non Refundable Taxes (perc)  +  1st Result NEEDS VALIDATION 
+				console.log('1st Result (941X) L26A C1: $' + refundablePortionERC);
+				
 			} else {
 				continue
 			}
