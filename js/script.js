@@ -870,4 +870,139 @@ $(document).ready(function(){
 		}
 		
 	});
+
+	//calculator
+	let obj = {}
+
+	$('#claimIt').click(function () {
+		$('.dropdown__box ul input:checked').each(function () {
+			var text = $(this).attr('data-check');
+			obj[text] = {
+				employeesWorked: null,
+				totalWages: null,
+				w2Period: {
+					ownersW2: 0,
+					wagesW2: 0
+				}
+			};
+		});
+	})
+
+
+	$('.dropdown__box ul input').change(function () {
+		if (!$(this).is(':checked')) {
+			var text = $(this).attr('data-check');;
+			delete obj[text];
+		}
+		if ($(this).is(':checked')) {
+			var text = $(this).attr('data-check');
+			obj[text] = {
+				employeesWorked: null,
+				totalWages: null,
+				w2Period: {
+					ownersW2: 0,
+					wagesW2: 0
+				}
+			};
+		}
+	});
+
+	const showResult = () => {
+		var size = $('.check__refunds .elem__check').length
+		let totalRefound = 0;
+
+		for (let i = 1; i <= size; i++) {
+			let key = `elem${i}`;
+			if (key in obj) {
+				let perc = parseFloat((obj[`elem${i}`].totalWages).replace(/[,|$]/g, ""));
+				if (i === 1 || i === 2 || i === 3) {
+					perc *= 0.064; 
+				} else {
+					perc *= 0.0145;
+				}
+				totalRefound += perc;
+				let elements = $('.check__refunds .elem__check');
+				let indexElement = i - 1;
+				perc = Math.round(perc)
+				$(elements[indexElement]).attr('data-value', perc);
+				$(elements[indexElement]).find('.left__check p').text('$' + addCommas(perc));
+			} else {
+				continue
+			}
+		}
+		totalRefound = Math.round(totalRefound);
+		$('.totalRefound').text('$' + addCommas(totalRefound));
+	}
+
+
+	$('#SubmitBtn').click(function () {
+		var size = $('.container__quarters .elem__quarter').length
+		for (let i = 1; i <= size; i++) {
+			let key = `elem${i}`;
+			if (key in obj) {
+				obj[`elem${i}`].employeesWorked = $(`#elem${i} .group__input.employees.required input`).val();
+				obj[`elem${i}`].totalWages = $(`#elem${i} .group__input.required.value input`).val();
+				obj[`elem${i}`].w2Period.ownersW2 = $(`#elem${i} .owners .group__input.employees.required input`).val();
+				obj[`elem${i}`].w2Period.wagesW2 = $(`#elem${i} .owners .group__input.required.value input`).val();
+			} else {
+				continue;
+			}
+		}
+		console.log(obj)
+		showResult()
+	})
+
+	$('#SubmitBtnQuarter').click(function () {
+		var size = $('.container__quarters .elem__quarter').length
+		for (let i = 1; i <= size; i++) {
+			let key = `elem${i}`;
+			if (key in obj) {
+				obj[`elem${i}`].employeesWorked = $(`#elem${i} .group__input.employees.required input`).val();
+				obj[`elem${i}`].totalWages = $(`#elem${i} .group__input.required.value input`).val();
+				obj[`elem${i}`].w2Period.ownersW2 = $(`#elem${i} .owners .group__input.employees.required input`).val();
+				obj[`elem${i}`].w2Period.wagesW2 = $(`#elem${i} .owners .group__input.required.value input`).val();
+			}
+		}
+		console.log(obj)
+	})
+
+	function addCommas(number) {
+		let numStr = String(number);
+		if (numStr.length <= 3) {
+			return numStr;
+		} else {
+			let numArr = numStr.split('');
+			let commaIndex = numArr.length - 3;
+			while (commaIndex > 0) {
+				numArr.splice(commaIndex, 0, ',');
+				commaIndex -= 3;
+			}
+			return numArr.join('');
+		}
+	}
+
+
+	$('#showResult').click(function () {
+		showResult()
+	})
+
+	let claimAmount = null;
+
+	$('.submit__refund button').click(function(){
+		claimAmount = $('.refund__box .total p span').text()
+		$('.amount__desc p').text(claimAmount)
+		let getValue = parseFloat((claimAmount).replace(/[,|$]/g, ""))
+		let serviceFee = getValue * 0.15; //
+		let savingFee = getValue * 0.1;
+		let cashAdv = getValue * 0.235; //
+		let refoundResult = getValue - serviceFee - cashAdv;
+		// show in page
+		$('.amount__desc p').text(claimAmount);
+		$('.savings p span').text('$' + addCommas(savingFee.toFixed()));
+		$('.service__fee p').text('$' + addCommas(serviceFee.toFixed()));
+		$('.cash__fee p').text('$' + addCommas(cashAdv.toFixed()));
+		$('.irs__info h2 span').text('$' + addCommas(refoundResult.toFixed()));
+		
+	})
+
 });

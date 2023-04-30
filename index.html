@@ -888,7 +888,7 @@
 							</div>
 							<div class="refund__waiting">
 								<p>Your Refund Is Waiting!</p>
-								<a href="#">Claim it Now <span><img src="img/nextarrow.svg" alt="nextarrow"></span></a>
+								<a href="#" id="claimIt">Claim it Now <span><img src="img/nextarrow.svg" alt="nextarrow"></span></a>
 							</div>
 							<div class="other__options">
 								<div class="elem__other purple">
@@ -1075,7 +1075,7 @@
 								</div>
 							</div>
 							<div class="container__quarters">
-								<div class="elem__quarter elem1" style="display:none;">
+								<div class="elem__quarter elem1" id="elem1" style="display:none;">
 									<div class="group__input employees required">
 										<p>How many employees worked? (Box 1 941)</p>
 										<input type="number" placeholder="Enter number" >
@@ -1212,7 +1212,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="elem__quarter elem2" style="display:none;">
+								<div class="elem__quarter elem2" id="elem2" style="display:none;">
 									<div class="group__input employees required">
 										<p>How many employees worked? (Box 1 941)</p>
 										<input type="number" placeholder="Enter number" >
@@ -1349,7 +1349,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="elem__quarter elem3" style="display:none;">
+								<div class="elem__quarter elem3" id="elem3" style="display:none;">
 									<div class="group__input employees required">
 										<p>How many employees worked? (Box 1 941)</p>
 										<input type="number" placeholder="Enter number" >
@@ -1486,7 +1486,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="elem__quarter elem4" style="display:none;">
+								<div class="elem__quarter elem4" id="elem4" style="display:none;">
 									<div class="group__input employees required">
 										<p>How many employees worked? (Box 1 941)</p>
 										<input type="number" placeholder="Enter number" >
@@ -1623,7 +1623,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="elem__quarter elem5" >
+								<div class="elem__quarter elem5" id="elem5" >
 									<div class="group__input employees required">
 										<p>How many employees worked? (Box 1 941)</p>
 										<input type="number" placeholder="Enter number" >
@@ -1760,7 +1760,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="elem__quarter elem6" style="display:none;">
+								<div class="elem__quarter elem6" id="elem6" style="display:none;">
 									<div class="group__input employees required">
 										<p>How many employees worked? (Box 1 941)</p>
 										<input type="number" placeholder="Enter number" >
@@ -1902,8 +1902,8 @@
 								<div class="back__button">
 									<a href="#"><span><img src="img/smallback.svg" alt="smallback"></span> Previous step</a>
 								</div>
-								<a href="#" class="next__step" style="display:none;">Submit</a>
-								<a href="#" class="next__quarter"><p>Upload and Continue to <span class="continue">2021 Q3</span></p> <span><img src="img/nextarrow.svg" alt="nextarrow"></span></a>
+								<a href="#" id="SubmitBtn" class="next__step" style="display:none;">Submit</a>
+								<a href="#" id="SubmitBtnQuarter" class="next__quarter"><p>Upload and Continue to <span class="continue">2021 Q3</span></p> <span><img src="img/nextarrow.svg" alt="nextarrow"></span></a>
 							</div>
 						</div>
 						<div class="form__side">
@@ -1994,7 +1994,7 @@
 							</div>
 							
 							<div class="group__controls">
-								<a href="#" class="refund__">Continue <span><img src="img/nextarrow.svg" alt="nextarrow"></span></a>
+								<a href="#" id="showResult" class="refund__">Continue <span><img src="img/nextarrow.svg" alt="nextarrow"></span></a>
 							</div>
 						</div>
 						<div class="form__side">
@@ -2154,7 +2154,7 @@
 			</div>
 			<div class="refund__box" style="display:none;">
 				<div class="head__refund">
-					<h2>Refund Total: <span>$76,000</span></h2>
+					<h2>Refund Total: <span class="totalRefound">$76,000</span></h2>
 					<p>Your Credit is eligible for a cash advance!</p>
 				</div>
 				<div class="check__refunds">
