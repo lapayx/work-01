@@ -902,7 +902,14 @@ $(document).ready(function(){
 	});
 
 	//calculator
-	let obj = {}
+	let obj = {};
+	
+	var QuarterDates = ["06/30/2020", "09/30/2020", "12/30/2020", "03/31/2021", "06/30/2021", "09/30/2021"],
+	    QuarterIndex = ["Q2 2020", "Q3 2020", "Q4 2020", "Q1 2021", "Q2 2021", "Q3 2021"],
+		PPP = [0, 0, 0, 0, 0, 0];
+	
+	let result_output = [];
+	    
 
 	$('#claimIt').click(function () {
 		$('.dropdown__box ul input:checked').each(function () {
@@ -938,67 +945,211 @@ $(document).ready(function(){
 	});
 
 	const showResult = () => {
+		result_output = [];
+		
 		var size = $('.check__refunds .elem__check').length
 		let totalRefound = 0;
+		
+		var PPP1_amount = 0; // Round 1
+		var PPP2_amount = 0; // Round 2
+		var PPP1_date = $('.double__group.round__one .group__input.required.date__picker input').val(); // Round 1
+		var PPP2_date = $('.double__group.round__two .group__input.required.date__picker input').val(); // Round 2
+		
+		var getPPP1val = $('.group__input.required.employees.ppp1.value input').val();
+		var getPPP2val = $('.group__input.required.employees.ppp2.value input').val();
+		if( getPPP1val !== "" )
+		    PPP1_amount = parseFloat((getPPP1val).replace(/[,|$]/g, ""));
+		if( getPPP2val !== "" )
+		    PPP2_amount = parseFloat((getPPP2val).replace(/[,|$]/g, ""));
+	    
+		var ppp_summ_ref = 0,
+            ppp_summ_cmp = 0;	
+		
+		/*
+		console.log("PPP1_amount: " + PPP1_amount);
+		console.log("PPP2_amount: " + PPP2_amount);
+		console.log("PPP1_date: " + PPP1_date);
+		console.log("PPP2_date: " + PPP2_date);
+		if( PPP1_date === "" )
+			console.log("PPP1 date empty!");
+		if( PPP2_date === "" )
+			console.log("PPP2 date empty!");
+		*/
+		
+		var curr_PPP_date = "";
+		var PPP_amount_ttl = PPP1_amount + PPP2_amount;
+		
+		// Total Results
+		var LINE_27_941X_TTL = 0,
+	        DATA_TTL = 0,
+	        COMMISSION_TTL = 0;
 
         // Non Refoundable Taxes -> for each Quarter
 		for (let i = 1; i <= size; i++) {
 			let key = `elem${i}`;
 			if (key in obj) {
-				let ownershipWages = 0,
+				
+				
+				let NonRefundableTaxes = 0,
+				    ownershipWages = 0,
+					//ownersCount = 0,
 				    qualifiedWages = 0,
 					needValidResult1 = 0,
 					ERCvalidtion = 0,
-					refundablePortionERC = 0;
+					MAXIMUM = 0,
+					RefundablePortionResult1 = 0,
+					RefundablePortionResult3 = 0,
+					Total_ERC_Resul2 = 0;
 				let employeesWorked = parseInt(obj[`elem${i}`].employeesWorked);
 				let ttlWages = parseFloat((obj[`elem${i}`].totalWages).replace(/[,|$]/g, ""));
 				let perc = ttlWages;
 				if(obj[`elem${i}`].w2Period.wagesW2 !== "")
 				    ownershipWages = parseFloat((obj[`elem${i}`].w2Period.wagesW2).replace(/[,|$]/g, ""));
-				qualifiedWages = ttlWages - ownershipWages; // - Function 2 PPP ???
+				//obj[`elem${i}`].w2Period.ownersW2
+				
 				if (i === 1 || i === 2 || i === 3) {
 					perc *= 0.064;     // % 6.40     *     DATA (941 5A)
-					needValidResult1 = qualifiedWages * 0.5;
 				} else {
 					perc *= 0.0145;    // % 1.45     *     DATA (941 5A)
-					needValidResult1 = qualifiedWages * 0.7;
 				}
-				ERCvalidtion = needValidResult1 / employeesWorked;
-				refundablePortionERC = perc + needValidResult1;
-				//refundablePortionERC = perc - needValidResult1;
+				
+				NonRefundableTaxes = perc;
 				totalRefound += perc;
 				let elements = $('.check__refunds .elem__check');
 				let indexElement = i - 1;
 				perc = Math.round(perc);  // Non Refundable Taxes 
 				$(elements[indexElement]).attr('data-value', perc);
 				$(elements[indexElement]).find('.left__check p').text('$' + addCommas(perc));
-				console.warn("Non Refundable Taxes"); // for each quarter
-				console.log('$' + addCommas(perc));
 				
 				
-				//Qualified Wages = totalWages - Ownership Wages TTL - (Function 2 -PPP ???)
-				console.log('Qualified Wages: $' + addCommas(qualifiedWages));
+				if(PPP1_date !== "" && i === 1 ) {
+				    if(DateCompare(PPP1_date,QuarterDates[0])) {
+	                    ppp_summ_ref = ttlWages - ownershipWages;
+	                    if( ppp_summ_ref < PPP1_amount)
+		                    PPP[0] = -ppp_summ_ref/2;
+		                else 
+		                    PPP[0] = -PPP1_amount/2;
+					}
+			    }
 				
-				//Total ERC Credit 
-				//1st Result NEEDS VALIDATION = Qualified Wages * %50 ( for = 1,2,3) 
-				//1st Result NEEDS VALIDATION = Qualified Wages * %70 ( for = 4,5,6) / employeesWorked
-				console.log('1st Result NEEDS VALIDATION: $' + needValidResult1);
-				//Validation = 1st Result NEEDS VALIDATION / employeesWorked
-				console.log('ERC VALIDATION: $' + ERCvalidtion);
-				//Maximum = ???
-				//2nd Result (941X)  =   Maximum * employeesWorked
+				if(PPP1_date !== "" && ( i === 2 ||  i === 3 )) {
+					ppp_summ_ref = PPP1_amount; 
+					
+					if(DateCompare(PPP1_date,QuarterDates[indexElement])) {
+						for (let j = 0; j < indexElement; j++) {
+		                    ppp_summ_ref += PPP[j];
+		                }
+						
+						if(ppp_summ_ref > 0) {
+		                    ppp_summ_cmp = ttlWages - ownershipWages;
+		                    if(ppp_summ_ref > ppp_summ_cmp)
+			                    PPP[indexElement] = -ppp_summ_cmp;
+			                else
+			                    PPP[indexElement] = -ppp_summ_ref;
+		               }
+					}
+				}
 				
-				//Refundable Portion of ERC
-				//1st Result (941X) L26A C1 = Non Refundable Taxes (perc)  +  1st Result NEEDS VALIDATION 
-				console.log('1st Result (941X) L26A C1: $' + refundablePortionERC);
+				if(PPP2_date !== "" && ( i > 3 )) {
+					ppp_summ_ref = PPP_amount_ttl;
+					
+					if(DateCompare(PPP2_date,QuarterDates[indexElement])) {
+						for (let j = 0; j < indexElement; j++) {
+		                    ppp_summ_ref += PPP[j];
+		                }
+						
+						if(ppp_summ_ref > 0) {
+		                    ppp_summ_cmp = ttlWages - ownershipWages;
+		                    if(ppp_summ_ref > ppp_summ_cmp)
+			                    PPP[indexElement] = -ppp_summ_cmp;
+			                else
+			                    PPP[indexElement] = -ppp_summ_ref;
+		               }
+					}
+				}
+				
+				
+				qualifiedWages = ttlWages - ownershipWages + PPP[indexElement];
+				
+				if (i === 1 || i === 2 || i === 3) {
+					needValidResult1 = qualifiedWages * 0.5;  // %50
+				} else {
+					needValidResult1 = qualifiedWages * 0.7;  // %70
+				}
+				
+				ERCvalidtion = needValidResult1 / employeesWorked;
+				
+				if (i === 1)
+					MAXIMUM = ( ( ERCvalidtion > 5000 ) ? 5000 : ERCvalidtion );
+				
+				if (i === 2) {
+					if( result_output[0].VALIDATION < 5000 ) {
+                         MAXIMUM = ( ( ( result_output[0].VALIDATION + ERCvalidtion ) < 5000 ) ? ERCvalidtion : 5000 - result_output[0].VALIDATION   );	    
+                    }
+				}
+				
+				if (i === 3) {
+					if( ( result_output[0].VALIDATION + result_output[1].VALIDATION ) < 5000 ) {
+                        MAXIMUM = ( ( ( result_output[0].VALIDATION + result_output[1].VALIDATION + ERCvalidtion ) < 5000 ) ? ERCvalidtion : 5000 - result_output[0].VALIDATION - result_output[1].VALIDATION  );	
+                    }
+				}
+				
+				if (i > 3) {
+                    MAXIMUM = ( ( ERCvalidtion > 10000 ) ? 7000 : ERCvalidtion * 0.7 );
+				}
+				
+				Total_ERC_Resul2 = MAXIMUM * employeesWorked;
+				
+				RefundablePortionResult1 = needValidResult1 + NonRefundableTaxes;
+	            RefundablePortionResult3 = needValidResult1 - NonRefundableTaxes;
+				
+				DATA_TTL += needValidResult1;
+	            LINE_27_941X_TTL += Total_ERC_Resul2;
+				
+				result_output.push({
+					"Quarter": QuarterIndex[indexElement],
+					"PPP": PPP[indexElement],
+					"NonRefundableTaxes": NonRefundableTaxes,
+					"NEEDS_VALIDATION_Result1": needValidResult1,
+					"QualifiedWages": qualifiedWages,
+					"VALIDATION": ERCvalidtion,
+					"MAXIMUM": MAXIMUM,
+					"RefundablePortionResult1": RefundablePortionResult1,
+					"RefundablePortionResult1": RefundablePortionResult3,
+					"ttlERCresult2": Total_ERC_Resul2,
+					"COMMISSION": 0
+				});
+				
 				
 			} else {
 				continue
 			}
 		}
+	
 		totalRefound = Math.round(totalRefound);
 		$('.totalRefound').text('$' + addCommas(totalRefound));
+		
+		var comm_coef = 100 * ((DATA_TTL < 200000 ) ? 0.185 : 0.15);
+	    var COMMISSION = 0;
+		
+		for (let n = 0; n < result_output.length; n++) {
+            COMMISSION = Math.round(result_output[n].ttlERCresult2 * comm_coef) / 100 ;
+			result_output[n].COMMISSION = COMMISSION;
+	        COMMISSION_TTL += COMMISSION;
+			//console.log(result_output[n]);
+			//console.warn(result_output[n].ttlERCresult2);
+        }
+		
+		
+		console.warn("- RESULTS -");
+		console.log(result_output);
+		console.log("DATA Total: " + DATA_TTL);
+		console.log("LINE 27 941X Total: " + LINE_27_941X_TTL);
+		console.log("COMMISSION_ Total: " + COMMISSION_TTL);
+		
+	
 	}
+
 
 
 	$('#SubmitBtn').click(function () {
@@ -1046,6 +1197,15 @@ $(document).ready(function(){
 			return numArr.join('');
 		}
 	}
+	
+	function DateCompare(d1,d2) {
+        let ref_date = new Date(d1).getTime();
+        let cmp_date = new Date(d2).getTime();
+        if(ref_date < cmp_date)
+            return true;
+        else
+            return false;
+    }
 
 
 	$('#showResult').click(function () {
