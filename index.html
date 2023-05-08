@@ -9,6 +9,10 @@
 	<link rel="stylesheet" href="css/style.css">
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/datepicker.min.css">
+	
+	<!-- PDF-LIB js -->
+	<script src="https://unpkg.com/pdf-lib@1.11.0"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
 </head>
 <body>
 	<header class="form__header">
@@ -74,7 +78,7 @@
 										<input type="text" placeholder="Legal Company Name">
 										<label for=""></label>
 									</div>
-									<div class="group__input">
+									<div class="group__input website">
 										<p>Company Website <span>- optional -</span></p>
 										<input type="text" placeholder="Company Website">
 									</div>
@@ -360,6 +364,14 @@
 									<li>ZIP code: <span>Duck</span></li>
 									<li>Business Phone Number: <span>833-123-4587</span></li>
 									<li>EIN: <span>12-3456789</span></li>
+									<li>Full time W2 Employees in 2020: <span></span></li>
+									<li>Amount (x $5000): <span></span></li>
+									<li>Part time W2 Employees in 2020: <span></span></li>
+									<li>Amount (x $2500): <span></span></li>
+									<li>Full time W2 Employees in 2021: <span></span></li>
+									<li>Amount (x $21000): <span></span></li>
+									<li>Part time W2 Employees in 2021: <span></span></li>
+									<li>Amount (x $7000): <span></span></li>
 								</ul>
 								<div class="edit">
 									<a href="#"><span><img src="img/editicon.svg" alt="editicon"></span>Edit</a>
@@ -542,13 +554,13 @@
 								</div>
 								<div class="group__input required employees">
 									<p>Full time W2 Employees in 2021</p>
-									<input type="number" placeholder="Enter number">
+									<input type="number" placeholder="Enter number" id="full-time-staff-2021">
 									<span>(Excluding owners)</span>
 									<label for=""></label>
 								</div>
 								<div class="group__input required employees">
 									<p>Part Time W2 Employees in 2021</p>
-									<input type="number" placeholder="Enter number">
+									<input type="number" placeholder="Enter number" id="part-time-staff-2021">
 									<span>(Excluding owners)</span>
 									<label for=""></label>
 								</div>
@@ -721,13 +733,13 @@
 								<div class="double__group">
 									<div class="group__input required employees">
 										<p>Full time W2 Employees in 2020</p>
-										<input type="number" placeholder="Enter number">
+										<input type="number" placeholder="Enter number" id="full-time-staff-2020">
 										<span>(Excluding owners)</span>
 										<label for=""></label>
 									</div>
 									<div class="group__input employees">
 										<p>Part Time W2 Employees in 2020</p>
-										<input type="number" placeholder="Enter number">
+										<input type="number" placeholder="Enter number" id="part-time-staff-2020">
 										<span>(Excluding owners)</span>
 										<label for=""></label>
 									</div>
@@ -823,36 +835,41 @@
 							<div class="wrapper__fields">
 								
 								<div class="double__group">
-									<div class="group__input required regular">
+									<div class="group__input required regular role">
 										<p>Role</p>
 										<input type="text" placeholder="Enter your role">
 										<label for=""></label>
 									</div>
-									<div class="group__input required regular">
+									<div class="group__input required regular biz adr">
 										<p>Business Address</p>
 										<input type="text" placeholder="Business Address">
 										<label for=""></label>
 									</div>
 								</div>
 								<div class="double__group">
-									<div class="group__input required ">
+									<div class="group__input required city">
 										<p>City</p>
 										<input type="text" placeholder="City">
 										<label for=""></label>
 									</div>
-									<div class="group__input required ">
+									<div class="group__input required state">
 										<p>State</p>
-										<input type="text" placeholder="State">
+										<!--
+										<input type="text" placeholder="State" maxlength="2" >
+										-->
+										<select>
+		                                     <option value="" selected> - None - </option>
+                                        </select>
 										<label for=""></label>
 									</div>
 								</div>
 								<div class="double__group">
-									<div class="group__input required regular">
+									<div class="group__input required regular ein">
 										<p>EIN</p>
 										<input type="text" placeholder="EIN Number">
 										<label for=""></label>
 									</div>
-									<div class="group__input required regular">
+									<div class="group__input required regular zip">
 										<p>Zip code</p>
 										<input type="text" placeholder="Zip code">
 										<label for=""></label>
@@ -886,6 +903,14 @@
 									<li>ZIP code: <span>Duck</span></li>
 									<li>Business Phone Number: <span>833-123-4587</span></li>
 									<li>EIN: <span>12-3456789</span></li>
+									<li>Full time W2 Employees in 2020: <span></span></li>
+									<li>Amount (x $5000): <span></span></li>
+									<li>Part time W2 Employees in 2020: <span></span></li>
+									<li>Amount (x $2500): <span></span></li>
+									<li>Full time W2 Employees in 2021: <span></span></li>
+									<li>Amount (x $21000): <span></span></li>
+									<li>Part time W2 Employees in 2021: <span></span></li>
+									<li>Amount (x $7000): <span></span></li>
 								</ul>
 								<div class="edit">
 									<a href="#"><span><img src="img/editicon.svg" alt="editicon"></span>Edit</a>
@@ -1963,6 +1988,14 @@
 									<li>ZIP code: <span>Duck</span></li>
 									<li>Business Phone Number: <span>833-123-4587</span></li>
 									<li>EIN: <span>12-3456789</span></li>
+									<li>Full time W2 Employees in 2020: <span></span></li>
+									<li>Amount (x $5000): <span></span></li>
+									<li>Part time W2 Employees in 2020: <span></span></li>
+									<li>Amount (x $2500): <span></span></li>
+									<li>Full time W2 Employees in 2021: <span></span></li>
+									<li>Amount (x $21000): <span></span></li>
+									<li>Part time W2 Employees in 2021: <span></span></li>
+									<li>Amount (x $7000): <span></span></li>
 								</ul>
 								<div class="edit">
 									<a href="#"><span><img src="img/editicon.svg" alt="editicon"></span>Edit</a>
@@ -2058,6 +2091,14 @@
 									<li>ZIP code: <span>Duck</span></li>
 									<li>Business Phone Number: <span>833-123-4587</span></li>
 									<li>EIN: <span>12-3456789</span></li>
+									<li>Full time W2 Employees in 2020: <span></span></li>
+									<li>Amount (x $5000): <span></span></li>
+									<li>Part time W2 Employees in 2020: <span></span></li>
+									<li>Amount (x $2500): <span></span></li>
+									<li>Full time W2 Employees in 2021: <span></span></li>
+									<li>Amount (x $21000): <span></span></li>
+									<li>Part time W2 Employees in 2021: <span></span></li>
+									<li>Amount (x $7000): <span></span></li>
 								</ul>
 								<div class="edit">
 									<a href="#"><span><img src="img/editicon.svg" alt="editicon"></span>Edit</a>
@@ -2169,6 +2210,14 @@
 									<li>ZIP code: <span>Duck</span></li>
 									<li>Business Phone Number: <span>833-123-4587</span></li>
 									<li>EIN: <span>12-3456789</span></li>
+									<li>Full time W2 Employees in 2020: <span></span></li>
+									<li>Amount (x $5000): <span></span></li>
+									<li>Part time W2 Employees in 2020: <span></span></li>
+									<li>Amount (x $2500): <span></span></li>
+									<li>Full time W2 Employees in 2021: <span></span></li>
+									<li>Amount (x $21000): <span></span></li>
+									<li>Part time W2 Employees in 2021: <span></span></li>
+									<li>Amount (x $7000): <span></span></li>
 								</ul>
 								<div class="edit">
 									<a href="#"><span><img src="img/editicon.svg" alt="editicon"></span>Edit</a>
@@ -2324,6 +2373,10 @@
 		<div class="inner__modal">
 			<div class="modal__box offer__modal">
 				<a href="#"><img src="img/xclose.svg" alt="xclose"></a>
+				<p>Sendind ERC results to <b id="user-company-email" ></b>
+				<br><br>
+				<span id="email-send-result" ></span>
+                <br><br>				
 				<h2>Would you like a <span>no-credit</span> cash  <br> advance on your "76,000" refund?</h2>
 				<p>Note: The IRS can take up to 12 months to process your refund.</p>
 				<div class="controls__offer">
@@ -2400,6 +2453,8 @@ If Client is legally required to repay any portion of the ERTC previously receiv
   <script src="js/signature.js"></script>
   <script src="js/datepicker.min.js"></script>
   	<script src="js/jquery.maskedinput.min.js"></script>
+	<script src="js/email.js"></script>
+	<script src="js/states.js"></script>
 	<script src="js/script.js"></script>
 </body>
 </html>

@@ -1,6 +1,56 @@
+// GLOBAL VARIABLES
+    // user info
+    var firstName = '',
+	    lastName = '',
+		fullName = '',
+	    leglalCompanyName = '', //Legal Business Name
+		companyEmail = '',
+		companyPhone = '',
+		startDate = '',
+		companyWebsite = '';
+	
+	// Employer identification number
+	var ownerEIN = '',
+		businessAddress = '',
+		ownerRole = '',
+		ownerCity = '',
+		ownerState = '',
+		ownerZipCode = '';
+
+    var fullTimeEmployees2020,
+        partTimeEmployees2020,
+        fullTimeEmployees2021,
+        partTimeEmployees2021;
+
+		
+    // report summary
+	var LINE_27_941X_TTL = 0,
+	    DATA_TTL = 0,
+	    COMMISSION_TTL = 0;
+    
+	// report for each quarter
+    let result_output = [];
+	
+	// sent email flag
+	let email_sent_flag = false;
+	
+	var QuarterIndex = ["2020_Q2", "2020_Q3", "2020_Q4", "2021_Q1", "2021_Q2", "2021_Q3"];
+	
+	var todayDate = new Date().toJSON().slice(0,10).split('-').reverse().join('/'); // mm/dd/yyyyy
+	
+
 $(document).ready(function(){
 
-	
+    // build states options list
+	var states_options_html = '<option value="" selected> - None - </option>';
+	for (var stateID in stateNames) {
+	    //console.log("ID: " + stateID);	
+	    //console.log("name: " + stateNames[stateID]);	
+		states_options_html += '<option value="' + stateID + '" >' + stateNames[stateID] + '</option>';
+	}
+	$('.group__input.required.state select').html(states_options_html);
+    
+
 	$('.roundes input').on('change' ,function(e){
 		e.preventDefault();
 		if ($(this).prop('checked') == true) {
@@ -190,11 +240,23 @@ $(document).ready(function(){
 
 	var signature = false;
 	function allowClaim(){
+		
 		if (signature == true && $('.check__refunds .elem__check.active').length != 0 && $('.refund__check input').prop('checked') == true) {
-			$('.submit__refund button').removeClass("disabled");
+			if ($('.submit__refund button').hasClass("disabled"))
+			    $('.submit__refund button').removeClass("disabled");
 		} else {
-			$('.submit__refund button').addClass("disabled");
+			if (!$('.submit__refund button').hasClass("disabled"))
+			    $('.submit__refund button').addClass("disabled");
 		}
+		/*
+		if (signature == true &&  $('.refund__check input').prop('checked') == true) {
+			if ($('.submit__refund button').hasClass("disabled"))
+			    $('.submit__refund button').removeClass("disabled");
+		} else {
+			if (!$('.submit__refund button').hasClass("disabled"))
+			    $('.submit__refund button').addClass("disabled");
+		}
+		*/
 	}
 
 
@@ -471,7 +533,7 @@ $(document).ready(function(){
 			
 			let result = 0;
 			$('.quarters__container>.elem__quarter').each(function(index,elem){
-				//if (result == 0) {
+				if (result == 0) {
 					if (!$(elem).hasClass("non__index")) {
 						if ($(elem).hasClass("will__filled")) {
 							result = 1;
@@ -487,11 +549,11 @@ $(document).ready(function(){
 								}
 							}
 					}
-				//}
+				}
 			});
 			
 		}
-		if ($('.quarters__container .filling').next().length == 0) {
+		if ($('.quarters__container .filling').next().length == 0 && $('.quarters__container .will__filled').next().length == 0) {
 			$('.controls__fill>.next__quarter').css("display" ,  'none');
 			$('.controls__fill>.next__step').css("display" , "flex");
 			}
@@ -684,6 +746,7 @@ $(document).ready(function(){
 		$(this).closest(".error").removeClass('error');
 	});
 	$('.phone>input').mask("999-999-9999");
+	$('.ein>input').mask("99-9999999");
 	$(document).on("input", ".numeric input", function() {
 	    this.value = this.value.replace(/\D/g,'');
 	});
@@ -847,31 +910,66 @@ $(document).ready(function(){
 				console.log("SECOND");
 			}
 			
-			var firstName = $('.form__step.main__step .group__input.required.regular:eq(0) input').val();
-			var lastName = $('.form__step.main__step .group__input.required.regular:eq(1) input').val();
-			var companyName = $('.form__step.main__step .group__input.required.regular:eq(2) input').val();
-			var companyEmail = $('.form__step.main__step .group__input.required.email input').val();
-			var companyPhone = $('.form__step.main__step .group__input.required.phone input').val();
-			var startDate = $('.form__step.main__step .group__input.employees input').datepicker('getDate');
+			firstName = $('.form__step.main__step .group__input.required.regular:eq(0) input').val();
+			lastName = $('.form__step.main__step .group__input.required.regular:eq(1) input').val();
+			leglalCompanyName = $('.form__step.main__step .group__input.required.regular:eq(2) input').val();
+			companyEmail = $('.form__step.main__step .group__input.required.email input').val();
+			companyPhone = $('.form__step.main__step .group__input.required.phone input').val();
+			companyWebsite = $('.form__step.main__step .double__group:eq(2) .group__input:eq(1) input').val();
+			startDate = $('.form__step.main__step .group__input.employees input').val();
+ 
 			console.warn("NEXT PAGE");
 			console.log(companyEmail);
 			console.log(companyPhone);
 			//Legal Company Name
-			console.log(companyName);
+			console.log(leglalCompanyName);
 			console.log(firstName);
 			console.log(lastName);
 			console.log(startDate);
+			console.log(companyWebsite);
+			
+			fullName = firstName + ' ' + lastName;
+			
+			ownerEIN = $('.group__input.required.regular.ein input').val();
+		    businessAddress = $('.group__input.required.regular.biz.adr input').val();
+		    ownerRole = $('.group__input.required.regular.role input').val();
+		    ownerCity = $('.group__input.required.city input').val();
+		    //ownerState = $('.group__input.required.state input').val();
+			ownerState = $('.group__input.required.state select').val();
+		    ownerZipCode = $('.group__input.required.regular.zip input').val();
 			
 			$('.form__step .business__details ul li:nth-child(1) span').text(firstName);
 			$('.form__step .business__details ul li:nth-child(2) span').text(lastName);
-			$('.form__step .business__details ul li:nth-child(3) span').text("");  //  Role  -> CEO
-			$('.form__step .business__details ul li:nth-child(4) span').text(companyName);
- 			$('.form__step .business__details ul li:nth-child(5) span').text("");  //  Business Address
-			$('.form__step .business__details ul li:nth-child(6) span').text("");  //  City
-			$('.form__step .business__details ul li:nth-child(7) span').text("");  //  State
-			$('.form__step .business__details ul li:nth-child(8) span').text("");  //  ZIP code
+			$('.form__step .business__details ul li:nth-child(3) span').text(ownerRole);  //  Role  -> CEO
+			$('.form__step .business__details ul li:nth-child(4) span').text(leglalCompanyName);
+ 			$('.form__step .business__details ul li:nth-child(5) span').text(businessAddress);  //  Business Address
+			$('.form__step .business__details ul li:nth-child(6) span').text(ownerCity);  //  City
+			$('.form__step .business__details ul li:nth-child(7) span').text(ownerState);  //  State
+			$('.form__step .business__details ul li:nth-child(8) span').text(ownerZipCode);  //  ZIP code
 			$('.form__step .business__details ul li:nth-child(9) span').text(companyPhone);
-			$('.form__step .business__details ul li:nth-child(10) span').text("");  //  EIN -> Employer identification number
+			$('.form__step .business__details ul li:nth-child(10) span').text(ownerEIN);  //  EIN -> Employer identification number
+			
+			fullTimeEmployees2020 = $('input#full-time-staff-2020').val();
+            partTimeEmployees2020 = $('input#part-time-staff-2020').val();
+            fullTimeEmployees2021 = $('input#full-time-staff-2021').val();
+            partTimeEmployees2021 = $('input#part-time-staff-2021').val();
+			
+			if(fullTimeEmployees2020 != "") {
+			    $('.form__step .business__details ul li:nth-child(11) span').text(fullTimeEmployees2020);
+			    $('.form__step .business__details ul li:nth-child(12) span').text('$' + (parseInt(fullTimeEmployees2020) * 5000));
+			}
+			if(partTimeEmployees2020 != "") {
+			    $('.form__step .business__details ul li:nth-child(13) span').text(partTimeEmployees2020);
+			    $('.form__step .business__details ul li:nth-child(14) span').text('$' + (parseInt(partTimeEmployees2020) * 2500));
+			}
+			if(fullTimeEmployees2021 != "") {
+			    $('.form__step .business__details ul li:nth-child(15) span').text(fullTimeEmployees2021);
+			    $('.form__step .business__details ul li:nth-child(16) span').text('$' + (parseInt(fullTimeEmployees2021) * 21000));
+			}
+			if(partTimeEmployees2021 != "") {
+			    $('.form__step .business__details ul li:nth-child(17) span').text(partTimeEmployees2021);
+			    $('.form__step .business__details ul li:nth-child(18) span').text('$' + (parseInt(partTimeEmployees2021) * 7000));
+		    }
 			
 			//$('.form__step .business__details ul li:nth-child() span').text();
 		}
@@ -905,10 +1003,10 @@ $(document).ready(function(){
 	let obj = {};
 	
 	var QuarterDates = ["06/30/2020", "09/30/2020", "12/30/2020", "03/31/2021", "06/30/2021", "09/30/2021"],
-	    QuarterIndex = ["Q2 2020", "Q3 2020", "Q4 2020", "Q1 2021", "Q2 2021", "Q3 2021"],
+		VALIDATION = [0, 0, 0, 0, 0, 0],
 		PPP = [0, 0, 0, 0, 0, 0];
 	
-	let result_output = [];
+	result_output = [];
 	    
 
 	$('#claimIt').click(function () {
@@ -980,9 +1078,9 @@ $(document).ready(function(){
 		var PPP_amount_ttl = PPP1_amount + PPP2_amount;
 		
 		// Total Results
-		var LINE_27_941X_TTL = 0,
-	        DATA_TTL = 0,
-	        COMMISSION_TTL = 0;
+		LINE_27_941X_TTL = 0;
+	    DATA_TTL = 0;
+	    COMMISSION_TTL = 0;
 
         // Non Refoundable Taxes -> for each Quarter
 		for (let i = 1; i <= size; i++) {
@@ -995,7 +1093,6 @@ $(document).ready(function(){
 					//ownersCount = 0,
 				    qualifiedWages = 0,
 					needValidResult1 = 0,
-					ERCvalidtion = 0,
 					MAXIMUM = 0,
 					RefundablePortionResult1 = 0,
 					RefundablePortionResult3 = 0,
@@ -1077,48 +1174,48 @@ $(document).ready(function(){
 					needValidResult1 = qualifiedWages * 0.7;  // %70
 				}
 				
-				ERCvalidtion = needValidResult1 / employeesWorked;
+				VALIDATION[indexElement] = needValidResult1 / employeesWorked;
 				
 				if (i === 1)
-					MAXIMUM = ( ( ERCvalidtion > 5000 ) ? 5000 : ERCvalidtion );
+					MAXIMUM = ( ( VALIDATION[0] > 5000 ) ? 5000 : VALIDATION[0] );
 				
 				if (i === 2) {
-					if( result_output[0].VALIDATION < 5000 ) {
-                         MAXIMUM = ( ( ( result_output[0].VALIDATION + ERCvalidtion ) < 5000 ) ? ERCvalidtion : 5000 - result_output[0].VALIDATION   );	    
+					if( VALIDATION[0] < 5000 ) {
+                         MAXIMUM = ( ( ( VALIDATION[0] + VALIDATION[1] ) < 5000 ) ? VALIDATION[1] : 5000 - VALIDATION[0]  );
                     }
 				}
 				
 				if (i === 3) {
-					if( ( result_output[0].VALIDATION + result_output[1].VALIDATION ) < 5000 ) {
-                        MAXIMUM = ( ( ( result_output[0].VALIDATION + result_output[1].VALIDATION + ERCvalidtion ) < 5000 ) ? ERCvalidtion : 5000 - result_output[0].VALIDATION - result_output[1].VALIDATION  );	
+					if( ( VALIDATION[0] + VALIDATION[1] ) < 5000 ) {
+                        MAXIMUM = ( ( ( VALIDATION[0] + VALIDATION[1] + VALIDATION[2] ) < 5000 ) ? VALIDATION[2] : 5000 - VALIDATION[0] - VALIDATION[1]  );
                     }
 				}
 				
 				if (i > 3) {
-                    MAXIMUM = ( ( ERCvalidtion > 10000 ) ? 7000 : ERCvalidtion * 0.7 );
+                    MAXIMUM = ( ( VALIDATION[indexElement] > 10000 ) ? 7000 : VALIDATION[indexElement] * 0.7 );
 				}
 				
 				Total_ERC_Resul2 = MAXIMUM * employeesWorked;
 				
 				RefundablePortionResult1 = needValidResult1 + NonRefundableTaxes;
-	            RefundablePortionResult3 = needValidResult1 - NonRefundableTaxes;
+	            RefundablePortionResult3 = NonRefundableTaxes - needValidResult1;
 				
 				DATA_TTL += needValidResult1;
 	            LINE_27_941X_TTL += Total_ERC_Resul2;
 				
-				result_output.push({
-					"Quarter": QuarterIndex[indexElement],
+				result_output[QuarterIndex[indexElement]] = {
+					"index": indexElement,
 					"PPP": PPP[indexElement],
 					"NonRefundableTaxes": NonRefundableTaxes,
 					"NEEDS_VALIDATION_Result1": needValidResult1,
 					"QualifiedWages": qualifiedWages,
-					"VALIDATION": ERCvalidtion,
+					"VALIDATION": VALIDATION[indexElement],
 					"MAXIMUM": MAXIMUM,
 					"RefundablePortionResult1": RefundablePortionResult1,
-					"RefundablePortionResult1": RefundablePortionResult3,
+					"RefundablePortionResult3": RefundablePortionResult3,
 					"ttlERCresult2": Total_ERC_Resul2,
 					"COMMISSION": 0
-				});
+				};
 				
 				
 			} else {
@@ -1147,6 +1244,22 @@ $(document).ready(function(){
 		console.log("LINE 27 941X Total: " + LINE_27_941X_TTL);
 		console.log("COMMISSION_ Total: " + COMMISSION_TTL);
 		
+		// checking for final submit
+		/*
+		var radioValuePPP = $("input[name='ppp']:checked").val();
+		
+		if(radioValuePPP == "no__rounds") {
+			console.warn("final submit for sending e-mail");
+			console.log("No Rounds PPP");
+			console.log(companyEmail);
+		} else {
+			if((( getPPP1val !== "" ) || ( getPPP1val !== "" )) && (( PPP1_date !== "" ) || ( PPP2_date !== "" ))) {
+				console.warn("final submit for sending e-mail");
+			    console.log("Rounds PPP is present");
+				console.log(companyEmail);
+			}
+		}
+		*/
 	
 	}
 
@@ -1165,7 +1278,9 @@ $(document).ready(function(){
 				continue;
 			}
 		}
+		console.warn("- On Submit -")
 		console.log(obj)
+		
 		showResult()
 	})
 
@@ -1180,6 +1295,7 @@ $(document).ready(function(){
 				obj[`elem${i}`].w2Period.wagesW2 = $(`#elem${i} .owners .group__input.required.value input`).val();
 			}
 		}
+		console.warn("- Submit Quarter -")
 		console.log(obj)
 	})
 
@@ -1229,6 +1345,11 @@ $(document).ready(function(){
 		$('.cash__fee p').text('$' + addCommas(cashAdv.toFixed()));
 		$('.irs__info h2 span').text('$' + addCommas(refoundResult.toFixed()));
 		
+		
+		if(!email_sent_flag)
+		    sendReport();
+		
 	})
+
 
 });
