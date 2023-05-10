@@ -229,6 +229,19 @@ $(document).ready(function(){
 		e.preventDefault();
 		$(this).closest('.droppable').find("input").click();
 	});
+	$('.droppable input').on('change', function () {
+		$el = $(".js-file-list").remove();
+
+		for (var file of this.files) {
+			var $el = $("<p class='js-file-list' />");
+			//$el = $(".js-file-list")[0];
+			$el.text( file.name);
+			$('.droppable').append($el);
+		}
+		
+	});
+
+
 
 
 	$('.document__button>a').on('click' ,function(e){

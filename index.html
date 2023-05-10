@@ -2070,6 +2070,9 @@
 							</div>
 							
 							<div class="group__controls">
+								<div class="back__button">
+									<a href="#"><span><img src="img/smallback.svg" alt="smallback"></span> Previous step</a>
+								</div>
 								<a href="#" id="showResult" class="refund__">Continue <span><img src="img/nextarrow.svg" alt="nextarrow"></span></a>
 							</div>
 						</div>
@@ -2154,7 +2157,7 @@
 									</div>
 									<div class="droppable">
 										<h6>Drop your files here</h6>
-										<input type="file">
+										<input type="file" accept="application/pdf" multiple/>
 										<div class="droppable__icons">
 											<span><img src="img/cloud.svg" alt="cloud"></span>
 											<p>or</p>
@@ -2316,10 +2319,15 @@
 					</label>
 					<p>After accepting, we will file your claim with the IRS</p>
 				</div>
-				<div class="submit__refund">
-					<button type="submit" class="disabled">File Your Claim <span><img src="img/arrwhiute.svg" alt="nextarrow"></span></button>
-					<a href="#">Accept all to continue</a>
-				</div>
+				
+					
+					<div class="submit__refund">
+						
+						<button type="submit" class="disabled">File Your Claim <span><img src="img/arrwhiute.svg" alt="nextarrow"></span></button>
+						<a href="#">Accept all to continue</a>
+					</div>
+				
+				
 			</div>
 			<div class="claim__info" style="display:none;">
 				<div class="claim__desc">
