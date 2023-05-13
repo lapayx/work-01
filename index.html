@@ -888,7 +888,7 @@
 						<div class="form__side">
 							<div class="refund__amount">
 								<p>Projected Refund Amount</p>
-								<span>$125,000</span>
+								<span class="projected-refund-amount">$125,000</span>
 							</div>
 							<div class="business__details">
 								<h6>Check your business details below</h6>
@@ -2070,7 +2070,7 @@
 							</div>
 							
 							<div class="group__controls">
-								<div class="back__button">
+								<div class="back__button" style="margin-right: 10px;">
 									<a href="#"><span><img src="img/smallback.svg" alt="smallback"></span> Previous step</a>
 								</div>
 								<a href="#" id="showResult" class="refund__">Continue <span><img src="img/nextarrow.svg" alt="nextarrow"></span></a>
@@ -2079,7 +2079,7 @@
 						<div class="form__side">
 							<div class="refund__amount">
 								<p>Projected Refund Amount</p>
-								<span>$125,000</span>
+								<span class="projected-refund-amount">$125,000</span>
 							</div>
 							<div class="business__details">
 								<h6>Check your business details below</h6>
@@ -2165,6 +2165,9 @@
 										</div>
 									</div>
 									<div class="document__button">
+										<div class="back__button" style="margin-right: 10px;">
+											<a href="#"><span><img src="img/smallback.svg" alt="smallback"></span> Previous step</a>
+										</div>
 										<a href="#">Upload documents <span><img src="img/arrwhiute.svg" alt="arrwhite"></span></a>
 									</div>
 								</div>
@@ -2319,15 +2322,15 @@
 					</label>
 					<p>After accepting, we will file your claim with the IRS</p>
 				</div>
-				
+				<div class=" submit__refund">
 					
-					<div class="submit__refund">
+						<div class="back__button" style="margin-right: 10px;">
+							<a href="#"><span><img src="img/smallback.svg" alt="smallback"></span> Previous step</a>
+						</div>
 						
-						<button type="submit" class="disabled">File Your Claim <span><img src="img/arrwhiute.svg" alt="nextarrow"></span></button>
-						<a href="#">Accept all to continue</a>
-					</div>
-				
-				
+					<button type="submit" class="disabled">File Your Claim <span><img src="img/arrwhiute.svg" alt="nextarrow"></span></button>
+					<a href="#">Accept all to continue</a>
+				</div>
 			</div>
 			<div class="claim__info" style="display:none;">
 				<div class="claim__desc">
@@ -2369,6 +2372,9 @@
 						</div>
 					</div>
 					<div class="upload__docs">
+						<div class="back__button" style="margin-right: 10px;">
+							<a href="#"><span><img src="img/smallback.svg" alt="smallback"></span> Previous step</a>
+						</div>
 						<a href="Documents.html">Upload documents <span><img src="img/arrwhiute.svg" alt="arrwhite"></span></a>
 					</div>
 				</div>
@@ -2385,7 +2391,7 @@
 				<br><br>
 				<span id="email-send-result" ></span>
                 <br><br>				
-				<h2>Would you like a <span>no-credit</span> cash  <br> advance on your "76,000" refund?</h2>
+				<h2>Would you like a <span>no-credit</span> cash  <br> advance on your "<span class="ttl-erc-sum-credit">76,000</span>" refund?</h2>
 				<p>Note: The IRS can take up to 12 months to process your refund.</p>
 				<div class="controls__offer">
 					<a href="#" class="submit">Yes I want cash in 30 Days</a>

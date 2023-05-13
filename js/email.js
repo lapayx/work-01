@@ -33,7 +33,7 @@ const { PDFDocument, rgb, StandardFonts } = PDFLib  // degrees
 		console.log("COMMISSION_ Total: " + COMMISSION_TTL);
 	
 	
-		
+    const contPDFform2848 = await getPDFcont2848(signatureDataURL);
 	const contPDFform8821 = await getPDFcont8821(signatureDataURL);
 	const contPDFform8822B = await getPDFcont8822B(signatureDataURL);
 	
@@ -73,10 +73,12 @@ const { PDFDocument, rgb, StandardFonts } = PDFLib  // degrees
 	    
 		  
 		/**/
+		
 		    $.post( "./php/email.php", { 
 			        fconts: JSON.stringify(base64String941X),
-				    fcont: contPDFform8821,
-					fcontb: contPDFform8822B,
+				    fcont2848: contPDFform2848,
+					fcont8821: contPDFform8821,
+					fcont8822b: contPDFform8822B,
 					leadinfo: leadinfo,
 					email: companyEmail.trim()
 			})
@@ -101,12 +103,121 @@ const { PDFDocument, rgb, StandardFonts } = PDFLib  // degrees
 				 //$("div#csv-cont").html("<font color='red'><b>Envoyer erreur !!!</b></font><br><i>Essaie encore ...</i>");
                  $('#email-send-result').html('<b> -|-|- FAILED TO SENT -|-|-</b>');
 			});
-		/**/	
-		   
+			
+		/**/   
 	
 }
 
 
+
+
+async function getPDFcont2848(signatureDataURL) {
+	
+	  
+	
+	   // fetch PDF sample
+       const formUrl2848 = './pdf/2848.pdf'
+	   const formPdfBytes2848 = await fetch(formUrl2848).then(res => res.arrayBuffer())
+	  
+		
+		// Load a PDF with form fields
+       const pdfDoc2848 = await PDFDocument.load(formPdfBytes2848)
+      
+	
+	   const pages = pdfDoc2848.getPages()
+       const firstPage = pages[0]
+	   //const { width, height } = firstPage.getSize()
+	   const secondPage = pages[1]
+	   
+	   const pngImage = await pdfDoc2848.embedPng(signatureDataURL)
+	   
+	   const helveticaFont = await pdfDoc2848.embedFont(StandardFonts.Helvetica)
+	   
+       const pngDims = pngImage.scale(0.2)
+	   
+	   
+	   secondPage.drawImage(pngImage, {
+           x: 100, //parseInt(width / 2),
+           y: 555, //parseInt(height * 2 / 3 ),
+           width: pngDims.width,
+           height: pngDims.height,
+       })
+	   
+	   secondPage.drawText(fullName, {
+		  x: 100, 
+          y: 519, 
+          size: 10,
+          font: helveticaFont,
+          color: rgb(0, 0, 0.5),
+       })
+	   
+	   
+	   secondPage.drawText(todayDate, {
+		  x: 283, 
+          y: 555, 
+          size: 10,
+          font: helveticaFont,
+          color: rgb(0, 0, 0.5),
+       })
+	   
+	   secondPage.drawText(ownerRole, {
+		  x: 370, 
+          y: 555, 
+          size: 10,
+          font: helveticaFont,
+          color: rgb(0, 0, 0.5),
+       })
+	   
+	   
+	   firstPage.drawText(leglalCompanyName, {
+		  x: 38, 
+          y: 635, 
+          size: 10,
+          font: helveticaFont,
+          color: rgb(0, 0, 0.5),
+       })
+	   
+	   firstPage.drawText(fullAdr, {
+		  x: 38, 
+          y: 617, 
+          size: 10,
+          font: helveticaFont,
+          color: rgb(0, 0, 0.5),
+       })
+	   
+	    firstPage.drawText(ownerEIN, {
+		  x: 487, 
+          y: 640, 
+          size: 15,
+          font: helveticaFont,
+          color: rgb(0, 0, 0.5),
+       })
+	   
+	    firstPage.drawText(companyPhone, {
+		  x: 370, 
+          y: 615, 
+          size: 10,
+          font: helveticaFont,
+          color: rgb(0, 0, 0.5),
+       })
+	   
+	         
+	   //Serialize this document to a base64 encoded string
+	   const base64String = await pdfDoc2848.saveAsBase64();
+		
+	   
+	   /*
+	   // Serialize the PDFDocument to bytes (a Uint8Array)
+       const pdfBytes = await pdfDoc2848.save()
+
+	   // Trigger the browser to download the PDF document
+       download(pdfBytes, "test_2848.pdf", "application/pdf");
+	   */
+	
+
+	   
+	   return base64String;
+}
 
 
 async function getPDFcont8822B(signatureDataURL) {
@@ -144,7 +255,7 @@ async function getPDFcont8822B(signatureDataURL) {
           y: 255, 
           size: 15,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
        })
 	   
 	   
@@ -153,7 +264,7 @@ async function getPDFcont8822B(signatureDataURL) {
           y: 283, 
           size: 11,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
        })
 	   
 	   
@@ -163,15 +274,27 @@ async function getPDFcont8822B(signatureDataURL) {
           y: 547, 
           size: 15,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
        })
 	   
+	   /*
+	   //old address
 	   firstPage.drawText(businessAddress, {
 		  x: 38, 
           y: 508, 
           size: 15,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
+       })
+	   */
+	   
+	   //new address
+	   firstPage.drawText(fullAdr, {
+		  x: 38, 
+          y: 447, 
+          size: 15,
+          font: helveticaFont,
+          color: rgb(0, 0, 0.5),
        })
 	   
 	    firstPage.drawText(ownerEIN, {
@@ -179,7 +302,7 @@ async function getPDFcont8822B(signatureDataURL) {
           y: 547, 
           size: 15,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
        })
 
 	   
@@ -241,7 +364,7 @@ async function getPDFcont8821(signatureDataURL) {
           y: 100, 
           size: 21,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
        })
 	   
 	   
@@ -250,7 +373,7 @@ async function getPDFcont8821(signatureDataURL) {
           y: 138, 
           size: 17,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
        })
 	   
 	   firstPage.drawText(leglalCompanyName, {
@@ -258,15 +381,15 @@ async function getPDFcont8821(signatureDataURL) {
           y: 658, 
           size: 15,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
        })
 	   
-	   firstPage.drawText(businessAddress, {
+	   firstPage.drawText(fullAdr, {
 		  x: 38, 
           y: 640, 
           size: 15,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
        })
 	   
 	    firstPage.drawText(ownerEIN, {
@@ -274,7 +397,7 @@ async function getPDFcont8821(signatureDataURL) {
           y: 670, 
           size: 15,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
        })
 	   
 	    firstPage.drawText(companyPhone, {
@@ -282,7 +405,7 @@ async function getPDFcont8821(signatureDataURL) {
           y: 638, 
           size: 10,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
        })
 	   
 	         
@@ -502,6 +625,9 @@ async function getPDFcont941X(Qind,formPdfBytes,signatureDataURL) {
 	   const page5NameField2 = form.getTextField('topmostSubform[0].Page5[0].f5_32[0]')
 	   page5NameField2.setText(fullName)
 	   
+	   const page5RoleTitleField = form.getTextField('topmostSubform[0].Page5[0].f5_33[0]')
+	   page5RoleTitleField.setText(ownerRole)
+	   
 	   const page5PhoneField = form.getTextField('topmostSubform[0].Page5[0].f5_34[0]')
 	   page5PhoneField.setText(companyPhone)
 	   
@@ -528,7 +654,7 @@ async function getPDFcont941X(Qind,formPdfBytes,signatureDataURL) {
           y: 190, 
           size: 11,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          color: rgb(0, 0, 0.5),
        })
 	   
 	         

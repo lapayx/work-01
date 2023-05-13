@@ -273,10 +273,10 @@ body * {
   margin-right: 0px;
   margin-left: auto;
 }
-.form__wrapper .outer__form .form__step .group__controls .back__button {
+.form__wrapper  .back__button > a  {
   padding-left: 30px;
 }
-.form__wrapper .outer__form .form__step .group__controls .back__button > a {
+.form__wrapper  .back__button  > a {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -295,10 +295,10 @@ body * {
       -ms-flex-pack: start;
           justify-content: flex-start;
 }
-.form__wrapper .outer__form .form__step .group__controls .back__button > a:hover {
+.form__wrapper  .back__button > a > a:hover {
   opacity: .7;
 }
-.form__wrapper .outer__form .form__step .group__controls .back__button > a span {
+.form__wrapper  .back__button > a > a span {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -3259,7 +3259,7 @@ body * {
     line-height: 26px;
   }
 
-  .form__wrapper .outer__form .form__step .group__controls .back__button {
+  .form__wrapper  .back__button > a  {
     margin-bottom: 10px;
   }
 
@@ -3365,7 +3365,7 @@ body * {
     line-height: 24px;
   }
 
-  .form__wrapper .outer__form .form__step .group__controls .back__button {
+  .form__wrapper  .back__button > a  {
     padding-left: 0px;
   }
 

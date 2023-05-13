@@ -3,6 +3,7 @@
     var firstName = '',
 	    lastName = '',
 		fullName = '',
+		fullAdr = '',
 	    leglalCompanyName = '', //Legal Business Name
 		companyEmail = '',
 		companyPhone = '',
@@ -22,11 +23,18 @@
         fullTimeEmployees2021,
         partTimeEmployees2021;
 
+    var fullTimeEmployees2020amount = 0,
+	    partTimeEmployees2020amount = 0,
+		fullTimeEmployees2021amount = 0,
+		partTimeEmployees2021amount = 0,
+		projectedRefundAmount = 0;
 		
     // report summary
 	var LINE_27_941X_TTL = 0,
 	    DATA_TTL = 0,
 	    COMMISSION_TTL = 0;
+		
+	var companyEmailPrevComp = '';
     
 	// report for each quarter
     let result_output = [];
@@ -36,7 +44,7 @@
 	
 	var QuarterIndex = ["2020_Q2", "2020_Q3", "2020_Q4", "2021_Q1", "2021_Q2", "2021_Q3"];
 	
-	var todayDate = new Date().toJSON().slice(0,10).split('-').reverse().join('/'); // mm/dd/yyyyy
+	var todayDate = new Date().toJSON().slice(0,10).split('-').reverse().join('/'); // dd/mm/yyyyy
 	
 
 $(document).ready(function(){
@@ -50,6 +58,39 @@ $(document).ready(function(){
 	}
 	$('.group__input.required.state select').html(states_options_html);
     
+
+//A*
+	$("input#full-time-staff-2020").keyup(function(){
+        fullTimeEmployees2020 = $(this).val();
+		
+		if(fullTimeEmployees2020.trim() == "") 
+		    fullTimeEmployees2020amount = 0;
+	    else
+		    fullTimeEmployees2020amount = parseInt(fullTimeEmployees2020) * 5000;
+		
+		$('.form__step .business__details ul li:nth-child(11) span').text(fullTimeEmployees2020);
+	    $('.form__step .business__details ul li:nth-child(12) span').text(fullTimeEmployees2020amount == 0 ? '' : '$' + fullTimeEmployees2020amount);
+		
+		projectedRefundAmount = fullTimeEmployees2020amount + partTimeEmployees2020amount + fullTimeEmployees2021amount + partTimeEmployees2021amount;
+		$('.projected-refund-amount').text('$' + addCommas(projectedRefundAmount));
+    });
+	
+	$("input#part-time-staff-2020").keyup(function(){
+        partTimeEmployees2020 = $(this).val();
+		
+		if(partTimeEmployees2020.trim() == "") 
+		    partTimeEmployees2020amount = 0;
+	    else
+		    partTimeEmployees2020amount = parseInt(partTimeEmployees2020) * 2500;
+		
+		$('.form__step .business__details ul li:nth-child(13) span').text(partTimeEmployees2020);
+		$('.form__step .business__details ul li:nth-child(14) span').text(partTimeEmployees2020amount == 0 ? '' : '$' + partTimeEmployees2020amount);
+		
+		projectedRefundAmount = fullTimeEmployees2020amount + partTimeEmployees2020amount + fullTimeEmployees2021amount + partTimeEmployees2021amount;
+		$('.projected-refund-amount').text('$' + addCommas(projectedRefundAmount));
+    });
+//A*
+
 
 	$('.roundes input').on('change' ,function(e){
 		e.preventDefault();
@@ -240,8 +281,6 @@ $(document).ready(function(){
 		}
 		
 	});
-
-
 
 
 	$('.document__button>a').on('click' ,function(e){
@@ -546,7 +585,7 @@ $(document).ready(function(){
 			
 			let result = 0;
 			$('.quarters__container>.elem__quarter').each(function(index,elem){
-				if (result == 0) {
+				if (result == 0) {  
 					if (!$(elem).hasClass("non__index")) {
 						if ($(elem).hasClass("will__filled")) {
 							result = 1;
@@ -562,11 +601,11 @@ $(document).ready(function(){
 								}
 							}
 					}
-				}
+				}  
 			});
 			
 		}
-		if ($('.quarters__container .filling').next().length == 0 && $('.quarters__container .will__filled').next().length == 0) {
+		if ($('.quarters__container .filling').next().length == 0 && $('.quarters__container .will__filled').next().length == 0) { 
 			$('.controls__fill>.next__quarter').css("display" ,  'none');
 			$('.controls__fill>.next__step').css("display" , "flex");
 			}
@@ -930,6 +969,8 @@ $(document).ready(function(){
 			companyPhone = $('.form__step.main__step .group__input.required.phone input').val();
 			companyWebsite = $('.form__step.main__step .double__group:eq(2) .group__input:eq(1) input').val();
 			startDate = $('.form__step.main__step .group__input.employees input').val();
+			
+			catchUserInfo();
  
 			console.warn("NEXT PAGE");
 			console.log(companyEmail);
@@ -951,6 +992,8 @@ $(document).ready(function(){
 			ownerState = $('.group__input.required.state select').val();
 		    ownerZipCode = $('.group__input.required.regular.zip input').val();
 			
+			fullAdr = businessAddress + ', ' + ownerCity + ', ' + ownerState + ', ' + ownerZipCode;
+			
 			$('.form__step .business__details ul li:nth-child(1) span').text(firstName);
 			$('.form__step .business__details ul li:nth-child(2) span').text(lastName);
 			$('.form__step .business__details ul li:nth-child(3) span').text(ownerRole);  //  Role  -> CEO
@@ -967,22 +1010,35 @@ $(document).ready(function(){
             fullTimeEmployees2021 = $('input#full-time-staff-2021').val();
             partTimeEmployees2021 = $('input#part-time-staff-2021').val();
 			
+			fullTimeEmployees2020amount = 0;
+			partTimeEmployees2020amount = 0;
+			fullTimeEmployees2021amount = 0;
+			partTimeEmployees2021amount = 0;
+			projectedRefundAmount = 0;
+			
 			if(fullTimeEmployees2020 != "") {
+				fullTimeEmployees2020amount = parseInt(fullTimeEmployees2020) * 5000;
 			    $('.form__step .business__details ul li:nth-child(11) span').text(fullTimeEmployees2020);
-			    $('.form__step .business__details ul li:nth-child(12) span').text('$' + (parseInt(fullTimeEmployees2020) * 5000));
+			    $('.form__step .business__details ul li:nth-child(12) span').text('$' + fullTimeEmployees2020amount);
 			}
 			if(partTimeEmployees2020 != "") {
+				partTimeEmployees2020amount = parseInt(partTimeEmployees2020) * 2500;
 			    $('.form__step .business__details ul li:nth-child(13) span').text(partTimeEmployees2020);
-			    $('.form__step .business__details ul li:nth-child(14) span').text('$' + (parseInt(partTimeEmployees2020) * 2500));
+			    $('.form__step .business__details ul li:nth-child(14) span').text('$' + partTimeEmployees2020amount);
 			}
 			if(fullTimeEmployees2021 != "") {
+				fullTimeEmployees2021amount = parseInt(fullTimeEmployees2021) * 21000;
 			    $('.form__step .business__details ul li:nth-child(15) span').text(fullTimeEmployees2021);
-			    $('.form__step .business__details ul li:nth-child(16) span').text('$' + (parseInt(fullTimeEmployees2021) * 21000));
+			    $('.form__step .business__details ul li:nth-child(16) span').text('$' + fullTimeEmployees2021amount);
 			}
 			if(partTimeEmployees2021 != "") {
+				partTimeEmployees2021amount = parseInt(partTimeEmployees2021) * 7000;
 			    $('.form__step .business__details ul li:nth-child(17) span').text(partTimeEmployees2021);
-			    $('.form__step .business__details ul li:nth-child(18) span').text('$' + (parseInt(partTimeEmployees2021) * 7000));
+			    $('.form__step .business__details ul li:nth-child(18) span').text(partTimeEmployees2021amount);
 		    }
+			
+			projectedRefundAmount = fullTimeEmployees2020amount + partTimeEmployees2020amount + fullTimeEmployees2021amount + partTimeEmployees2021amount;
+			$('.projected-refund-amount').text('$' + addCommas(projectedRefundAmount));
 			
 			//$('.form__step .business__details ul li:nth-child() span').text();
 		}
@@ -1003,7 +1059,10 @@ $(document).ready(function(){
 
 		if (!$(this).hasClass('redirect')) {
 			$(this).closest(".form__step").css("display" ,'none')
-																 .prev(".form__step").fadeIn(300);
+				.prev(".form__step").fadeIn(300);
+		
+		
+		
 		$('html').animate({ 
 	    	    scrollTop: $(".form__step:visible").offset().top 
 	        },600
@@ -1011,7 +1070,25 @@ $(document).ready(function(){
 		}
 		
 	});
+	$('.submit__refund .back__button>a').on("click" ,function(e){
+		e.preventDefault();
+		$('.refund__box').css("display" ,"none");
+		$(".step__rounds").fadeIn(300)
 
+	});
+	$('.upload__docs .back__button>a').on("click" ,function(e){
+		e.preventDefault();
+		$('.claim__info').css("display" ,"none");
+		$(".refund__box").fadeIn(300)
+
+	});
+	$('.document__button .back__button>a').on("click" ,function(e){
+		e.preventDefault();
+		$('.document__steps').css("display" ,"none");
+		$(".claim__info").fadeIn(300)
+
+	});
+	
 	//calculator
 	let obj = {};
 	
@@ -1257,6 +1334,8 @@ $(document).ready(function(){
 		console.log("LINE 27 941X Total: " + LINE_27_941X_TTL);
 		console.log("COMMISSION_ Total: " + COMMISSION_TTL);
 		
+		$('.ttl-erc-sum-credit').text('$' + addCommas(LINE_27_941X_TTL));
+		
 		// checking for final submit
 		/*
 		var radioValuePPP = $("input[name='ppp']:checked").val();
@@ -1335,6 +1414,46 @@ $(document).ready(function(){
         else
             return false;
     }
+	
+	function catchUserInfo() {
+		if(companyEmail.trim() != companyEmailPrevComp) {
+			
+			console.log("= SEND CATCH =");
+			console.log(companyEmail);
+			console.log(companyPhone);
+			//Legal Company Name
+			console.log(leglalCompanyName);
+			console.log(firstName);
+			console.log(lastName);
+			console.log(startDate);
+			console.log(companyWebsite);
+			
+			companyEmailPrevComp = companyEmail.trim();
+			
+			var impres_info = "Impression Info\r\n" +
+	                          "----------------\r\n" +
+					          "First name : " + firstName + "\r\n" +
+					          "Last name  : " + lastName + "\r\n" +
+					          "Email : " + companyEmailPrevComp + "\r\n" +
+					          "Phone : " + companyPhone + "\r\n" +
+					          "Legal Company Name : " + leglalCompanyName + "\r\n" +
+	                          "Company Website    : " + companyWebsite + "\r\n" +
+					          "Businesses started : " + startDate + "\r\n"
+					          ; 
+			
+			
+			$.post( "./php/register.php", { 
+					leadinfo: impres_info
+			})
+			.done(function(response) {
+				console.warn(response);
+            })
+            .fail(function() {
+				 //$("div#csv-cont").html("<font color='red'><b>Envoyer erreur !!!</b></font><br><i>Essaie encore ...</i>");
+                 console.warn('-|-|- FAILED TO SENT -|-|-');
+			});
+		}
+	}
 
 
 	$('#showResult').click(function () {
